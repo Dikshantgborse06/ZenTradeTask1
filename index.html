@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TASK-1</title>
+  <style>
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+  </style>
+</head>
+<body>
+
+<table id="productTable">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Subcategory</th>
+      <th>Title</th>
+      <th>Price</th>
+      <th>Popularity</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<script>
+  const apiUrl = 'https://s3.amazonaws.com/open-to-cors/assignment.json'; 
+
+  // Function to create and populate the table
+  function createTable(data) {
+    const tableBody = document.querySelector('#productTable tbody');
+
+    // Clear existing content
+    tableBody.innerHTML = '';
+
+    // Convert the products object to an array
+    const productsArray = Object.entries(data.products);
+
+    // Sort the array by popularity in descending order
+    productsArray.sort(([, a], [, b]) => b.popularity - a.popularity);
+
+    // Populate the table
+    for (const [productId, product] of productsArray) {
+      const row = tableBody.insertRow();
+      row.insertCell(0).textContent = productId;
+      row.insertCell(1).textContent = product.subcategory;
+      row.insertCell(2).textContent = product.title;
+      row.insertCell(3).textContent = product.price;
+      row.insertCell(4).textContent = product.popularity;
+    }
+  }
+
+  fetch(apiUrl)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then(data => {
+      createTable(data);
+    })
+    .catch(error => {
+      console.error('Error:', error.message);
+    });
+</script>
+
+</body>
+</html>
